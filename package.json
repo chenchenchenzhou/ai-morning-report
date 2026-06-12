@@ -1,0 +1,9 @@
+﻿{
+  "name": "ai-morning-report",
+  "version": "1.0.0",
+  "description": "AI Morning News Report",
+  "main": "ai_news_fetcher.js",
+  "scripts": {
+    "start": "node ai_news_fetcher.js"
+  }
+}

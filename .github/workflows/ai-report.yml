@@ -1,0 +1,40 @@
+﻿name: AI晨间新闻报告
+
+on:
+  schedule:
+    # 北京时间 9:30 = UTC 1:30，周一至周五
+    - cron: "30 1 * * 1-5"
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 运行新闻采集
+        run: node ai_news_fetcher.js
+
+      - name: 提交报告
+        run: |
+          git config user.name "AI晨报机器人"
+          git config user.email "bot@aimorning.report"
+          
+          # 检查是否有变化
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "报告无变化，跳过提交"
+            exit 0
+          fi
+          
+          git add AI晨报.html
+          git commit -m "📰 $(date '+%Y-%m-%d %A') AI晨报"
+          git push
